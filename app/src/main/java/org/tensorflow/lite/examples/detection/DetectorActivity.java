@@ -202,7 +202,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             for (final Detector.Recognition result : results) {
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
-               Log.d("test","134555");
+               Log.d("test----------------------",result.getTitle().toString());
                 canvas.drawRect(location, paint);
 
                 cropToFrameTransform.mapRect(location);

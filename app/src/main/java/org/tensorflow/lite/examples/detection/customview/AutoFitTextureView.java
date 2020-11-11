@@ -59,14 +59,15 @@ public class AutoFitTextureView extends TextureView {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     final int width = MeasureSpec.getSize(widthMeasureSpec);
     final int height = MeasureSpec.getSize(heightMeasureSpec);
-    if (0 == ratioWidth || 0 == ratioHeight) {
-      setMeasuredDimension(width, height);
-    } else {
-      if (width < height * ratioWidth / ratioHeight) {
-        setMeasuredDimension(width, width * ratioHeight / ratioWidth);
-      } else {
-        setMeasuredDimension(height * ratioWidth / ratioHeight, height);
-      }
-    }
+    setMeasuredDimension(width-300, height);
+//    if (0 == ratioWidth || 0 == ratioHeight) {
+//      setMeasuredDimension(width, height);
+//    } else {
+//      if (width < height * ratioWidth / ratioHeight) {
+//        setMeasuredDimension(width, height);
+//      } else {
+//        setMeasuredDimension(width, height);
+//      }
+//    }
   }
 }
