@@ -17,6 +17,7 @@
 package org.tensorflow.lite.examples.detection;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -38,6 +39,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.View;
@@ -51,13 +54,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.robotemi.sdk.Robot;
+import com.robotemi.sdk.TtsRequest;
+import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
 
 import java.nio.ByteBuffer;
+import java.util.Calendar;
+
 import org.tensorflow.lite.examples.detection.env.ImageUtils;
 import org.tensorflow.lite.examples.detection.env.Logger;
 
 public abstract class CameraActivity extends AppCompatActivity
     implements OnImageAvailableListener,
+        OnGoToLocationStatusChangedListener,
         Camera.PreviewCallback,
         CompoundButton.OnCheckedChangeListener,
         View.OnClickListener {
@@ -78,7 +86,7 @@ public abstract class CameraActivity extends AppCompatActivity
   private int yRowStride;
   private Runnable postInferenceCallback;
   private Runnable imageConverter;
-
+  int locationNumber=0;
   private LinearLayout bottomSheetLayout;
   private LinearLayout gestureLayout;
   private BottomSheetBehavior<LinearLayout> sheetBehavior;
@@ -96,7 +104,7 @@ public abstract class CameraActivity extends AppCompatActivity
     super.onCreate(null);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     robot = Robot.getInstance();
-
+    robot.addOnGoToLocationStatusChangedListener(this);
     setContentView(R.layout.tfe_od_activity_camera);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -130,7 +138,7 @@ public abstract class CameraActivity extends AppCompatActivity
             //                int width = bottomSheetLayout.getMeasuredWidth();
             int height = gestureLayout.getMeasuredHeight();
 
-            sheetBehavior.setPeekHeight(height);
+            sheetBehavior.setPeekHeight(0);
           }
         });
     sheetBehavior.setHideable(false);
@@ -300,6 +308,7 @@ public abstract class CameraActivity extends AppCompatActivity
   public synchronized void onStart() {
     LOGGER.d("onStart " + this);
     super.onStart();
+
   }
 
   @Override
@@ -310,11 +319,13 @@ public abstract class CameraActivity extends AppCompatActivity
     handlerThread.start();
     handler = new Handler(handlerThread.getLooper());
     B1 = (Button) findViewById(R.id.b1);
+
+
     B1.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        robot.goTo("home base");
-
+        robot.goTo("elevator");
+        locationNumber =1;
       }
     });
 
@@ -340,6 +351,7 @@ public abstract class CameraActivity extends AppCompatActivity
   public synchronized void onStop() {
     LOGGER.d("onStop " + this);
     super.onStop();
+    robot.removeOnGoToLocationStatusChangedListener(this);
   }
 
   @Override
@@ -509,6 +521,34 @@ public abstract class CameraActivity extends AppCompatActivity
     }
   }
 
+  @Override
+  public void onGoToLocationStatusChanged(String s, String s1, int i, String s2) {
+    if (s1.equals("complete"))
+    {
+      switch (locationNumber){
+        case 4:
+          locationNumber=1;
+          Log.d("location------------",Integer.toString(locationNumber));
+          robot.goTo("elevator");
+          break;
+        case 3:
+          locationNumber=4;
+          Log.d("location------------",Integer.toString(locationNumber));
+          robot.goTo("home base");
+          break;
+        case 1:
+          locationNumber=2;
+          Log.d("location------------",Integer.toString(locationNumber));
+          robot.goTo("302");
+          break;
+        case 2:
+          locationNumber=3;
+          Log.d("location------------",Integer.toString(locationNumber));
+          robot.goTo("elevator");
+          break;
+      }
+    }
+  }
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
     setUseNNAPI(isChecked);
