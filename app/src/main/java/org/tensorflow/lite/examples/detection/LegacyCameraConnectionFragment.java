@@ -169,7 +169,7 @@ public class LegacyCameraConnectionFragment extends Fragment {
               CameraConnectionFragment.chooseOptimalSize(
                       sizes, desiredSize.getWidth(), desiredSize.getHeight());
       parameters.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
-      camera.setDisplayOrientation(90);
+      camera.setDisplayOrientation(180);
       camera.setParameters(parameters);
       camera.setPreviewTexture(availableSurfaceTexture);
     } catch (IOException exception) {
