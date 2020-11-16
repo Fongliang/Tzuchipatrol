@@ -31,6 +31,10 @@ import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
+
+import com.robotemi.sdk.Robot;
+import com.robotemi.sdk.TtsRequest;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -203,6 +207,30 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
                Log.d("test----------------------",result.getTitle().toString());
+               String issueFnd = "發現"+result.getTitle().toString()+"發現"+result.getTitle().toString();
+                try{
+                  // delay 7 second
+                  Thread.sleep(5000);
+                  Robot.getInstance().startTelepresence("嚴","3f7b52cbdcdc3f77ecd0883f68ad097f"); //android
+                } catch(InterruptedException e) {
+                  e.printStackTrace();
+                }
+
+                try{
+                    // delay 7 second
+                    Thread.sleep(20000);
+                  Robot.getInstance().speak(TtsRequest.create(issueFnd, false));
+                } catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try{
+                  // delay 5 second
+                  Thread.sleep(5000);
+                  Robot.getInstance().speak(TtsRequest.create(issueFnd, false));
+                } catch(InterruptedException e) {
+                  e.printStackTrace();
+                }
+
                 canvas.drawRect(location, paint);
 
                 cropToFrameTransform.mapRect(location);
