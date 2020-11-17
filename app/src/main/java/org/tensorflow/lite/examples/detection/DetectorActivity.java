@@ -61,7 +61,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final String TF_OD_API_LABELS_FILE = "labelmap.txt";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
   // Minimum detection confidence to track a detection.
-  private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
+  private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.7f;
   private static final boolean MAINTAIN_ASPECT = false;
   private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
   private static final boolean SAVE_PREVIEW_BITMAP = false;
@@ -210,26 +210,27 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                String issueFnd = "發現"+result.getTitle().toString()+"發現"+result.getTitle().toString();
                 try{
                   // delay 7 second
-                  Thread.sleep(5000);
-                  Robot.getInstance().startTelepresence("嚴","3f7b52cbdcdc3f77ecd0883f68ad097f"); //android
+                  Thread.sleep(3000);
+//                  Robot.getInstance().startTelepresence("嚴","3f7b52cbdcdc3f77ecd0883f68ad097f"); //android
+                  Robot.getInstance().startTelepresence("Jhewei","f126c1f2a6cf53b8b8770ab82dbacedc"); //android
                 } catch(InterruptedException e) {
                   e.printStackTrace();
                 }
 
-                try{
-                    // delay 7 second
-                    Thread.sleep(20000);
-                  Robot.getInstance().speak(TtsRequest.create(issueFnd, false));
-                } catch(InterruptedException e) {
-                    e.printStackTrace();
-                }
-                try{
-                  // delay 5 second
-                  Thread.sleep(5000);
-                  Robot.getInstance().speak(TtsRequest.create(issueFnd, false));
-                } catch(InterruptedException e) {
-                  e.printStackTrace();
-                }
+//                try{
+//                    // delay 7 second
+//                    Thread.sleep(20000);
+//                  Robot.getInstance().speak(TtsRequest.create(issueFnd, false));
+//                } catch(InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                try{
+//                  // delay 5 second
+//                  Thread.sleep(5000);
+//                  Robot.getInstance().speak(TtsRequest.create(issueFnd, false));
+//                } catch(InterruptedException e) {
+//                  e.printStackTrace();
+//                }
 
                 canvas.drawRect(location, paint);
 

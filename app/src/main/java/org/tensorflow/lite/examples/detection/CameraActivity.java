@@ -56,10 +56,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.robotemi.sdk.Robot;
 import com.robotemi.sdk.TtsRequest;
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
+import com.robotemi.sdk.listeners.OnTelepresenceEventChangedListener;
+import com.robotemi.sdk.model.CallEventModel;
 
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 
+import org.jetbrains.annotations.NotNull;
 import org.tensorflow.lite.examples.detection.env.ImageUtils;
 import org.tensorflow.lite.examples.detection.env.Logger;
 
@@ -68,6 +71,7 @@ public abstract class CameraActivity extends AppCompatActivity
         OnGoToLocationStatusChangedListener,
         Camera.PreviewCallback,
         CompoundButton.OnCheckedChangeListener,
+        OnTelepresenceEventChangedListener,
         View.OnClickListener {
   private static final Logger LOGGER = new Logger();
 
@@ -103,8 +107,11 @@ public abstract class CameraActivity extends AppCompatActivity
     LOGGER.d("onCreate " + this);
     super.onCreate(null);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    //temi listener
     robot = Robot.getInstance();
     robot.addOnGoToLocationStatusChangedListener(this);
+    robot.addOnTelepresenceEventChangedListener(this);
+    //--
     setContentView(R.layout.tfe_od_activity_camera);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -351,13 +358,16 @@ public abstract class CameraActivity extends AppCompatActivity
   public synchronized void onStop() {
     LOGGER.d("onStop " + this);
     super.onStop();
-    robot.removeOnGoToLocationStatusChangedListener(this);
+
   }
 
   @Override
   public synchronized void onDestroy() {
     LOGGER.d("onDestroy " + this);
     super.onDestroy();
+    //temi listener
+    robot.removeOnGoToLocationStatusChangedListener(this);
+    robot.removeOnTelepresenceEventChangedListener(this);
   }
 
   protected synchronized void runInBackground(final Runnable r) {
@@ -526,16 +536,6 @@ public abstract class CameraActivity extends AppCompatActivity
     if (s1.equals("complete"))
     {
       switch (locationNumber){
-        case 4:
-          locationNumber=1;
-          Log.d("location------------",Integer.toString(locationNumber));
-          robot.goTo("elevator");
-          break;
-        case 3:
-          locationNumber=4;
-          Log.d("location------------",Integer.toString(locationNumber));
-          robot.goTo("home base");
-          break;
         case 1:
           locationNumber=2;
           Log.d("location------------",Integer.toString(locationNumber));
@@ -546,9 +546,46 @@ public abstract class CameraActivity extends AppCompatActivity
           Log.d("location------------",Integer.toString(locationNumber));
           robot.goTo("elevator");
           break;
+        case 3:
+          locationNumber=4;
+          Log.d("location------------",Integer.toString(locationNumber));
+          robot.goTo("home base");
+          break;
+        case 4:
+          locationNumber=1;
+          Log.d("location------------",Integer.toString(locationNumber));
+          robot.goTo("elevator");
+          break;
       }
     }
   }
+
+  @Override
+  public void onTelepresenceEventChanged(@NotNull CallEventModel callEventModel) {
+    Log.d("tele",callEventModel.toString());
+    if (callEventModel.component3()==1)
+    {
+      switch (locationNumber){
+        case 1:
+          Log.d("locationcon------------",Integer.toString(locationNumber));
+          robot.goTo("elevator");
+          break;
+        case 2:
+          Log.d("locationcon------------",Integer.toString(locationNumber));
+          robot.goTo("302");
+          break;
+        case 3:
+          Log.d("locationcon------------",Integer.toString(locationNumber));
+          robot.goTo("elevator");
+          break;
+        case 4:
+          Log.d("locationcon------------",Integer.toString(locationNumber));
+          robot.goTo("home base");
+          break;
+      }
+    }
+  }
+
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
     setUseNNAPI(isChecked);
