@@ -16,6 +16,9 @@
 
 package org.tensorflow.lite.examples.detection;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -26,17 +29,25 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.os.Environment;
 import android.os.SystemClock;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+
 import com.robotemi.sdk.Robot;
 import com.robotemi.sdk.TtsRequest;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
@@ -86,6 +97,22 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private MultiBoxTracker tracker;
 
   private BorderedText borderedText;
+
+  //write
+  private  final int REQUEST_EXTERNAL_STORAGE = 1;
+    private  String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE };
+    public  void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE);
+        }
+    }
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -207,7 +234,27 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
                Log.d("test----------------------",result.getTitle().toString());
-               String issueFnd = "發現"+result.getTitle().toString()+"發現"+result.getTitle().toString();
+                Calendar mCal = Calendar.getInstance();
+                CharSequence s = DateFormat.format("yyyyMMddkkmmss", mCal.getTime());
+                String issueFnd = "於"+s+"發現"+result.getTitle().toString();
+                String patrolLog = "/storage/emulated/0/"+s.toString()+".txt";
+                Log.d("Log------",patrolLog);
+                  String externalStorageDir = Environment.getExternalStorageDirectory().toString();
+                  Log.d("Log2------",externalStorageDir);
+                  verifyStoragePermissions(DetectorActivity.this);
+                try{
+                  FileWriter fw = new FileWriter(patrolLog, false);
+                  BufferedWriter bw = new BufferedWriter(fw); //將BufferedWeiter與FileWrite物件做連結
+                  bw.write(issueFnd);
+                  bw.newLine();
+                  bw.close();
+                }catch(IOException e){
+                  e.printStackTrace();
+                }
+                  File file = new File("/storage/emulated/0/20201118170208.txt");
+                  if (file.exists()) {
+                    file.delete();
+                  }
                 try{
                   // delay 7 second
                   Thread.sleep(3000);
