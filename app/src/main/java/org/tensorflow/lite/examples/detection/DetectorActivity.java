@@ -44,11 +44,16 @@ import com.robotemi.sdk.TtsRequest;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
 import org.tensorflow.lite.examples.detection.env.BorderedText;
@@ -98,7 +103,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private BorderedText borderedText;
 
-  //write
+  //write 權限
   private  final int REQUEST_EXTERNAL_STORAGE = 1;
     private  String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -111,6 +116,41 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
                     REQUEST_EXTERNAL_STORAGE);
+        }
+    }
+    public  void verifyStoragePermissions_read(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE);
+        }
+    }
+
+    //FTP upload
+    public void ftpUpload(String url, int port, String username, String password, String fileNamePath, String fileName){
+        FTPClient ftpClient = new FTPClient();
+        try {
+            ftpClient.connect(url, port);
+            int returnCode = ftpClient.getReplyCode();
+            if (ftpClient.login(username, password) && FTPReply.isPositiveCompletion(returnCode)){
+                ftpClient.setBufferSize(1024);
+                ftpClient.setControlEncoding("UTF-8");
+                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+                ftpClient.enterLocalPassiveMode();
+                java.io.FileInputStream fis = new java.io.FileInputStream(fileNamePath + fileName);
+                ftpClient.storeFile(fileName, fis);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                ftpClient.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -233,14 +273,14 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             for (final Detector.Recognition result : results) {
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
-               Log.d("test----------------------",result.getTitle().toString());
+               Log.d("test--------",result.getTitle().toString());
                 Calendar mCal = Calendar.getInstance();
                 CharSequence s = DateFormat.format("yyyyMMddkkmmss", mCal.getTime());
                 String issueFnd = "於"+s+"發現"+result.getTitle().toString();
                 String patrolLog = "/storage/emulated/0/"+s.toString()+".txt";
+                // write local report
                 Log.d("Log------",patrolLog);
                   String externalStorageDir = Environment.getExternalStorageDirectory().toString();
-                  Log.d("Log2------",externalStorageDir);
                   verifyStoragePermissions(DetectorActivity.this);
                 try{
                   FileWriter fw = new FileWriter(patrolLog, false);
@@ -251,10 +291,17 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 }catch(IOException e){
                   e.printStackTrace();
                 }
-                  File file = new File("/storage/emulated/0/20201118170208.txt");
+                String filename = s.toString()+".txt";
+                //FTP upload report
+     //             verifyStoragePermissions_read(DetectorActivity.this);
+                  ftpUpload("140.123.97.161",1111   ,"anonymous","","/storage/emulated/0/",filename);
+                    Log.d("ftp","/storage/emulated/0/"+filename);
+                //delete local report
+                  File file = new File(patrolLog);
                   if (file.exists()) {
                     file.delete();
                   }
+
                 try{
                   // delay 7 second
                   Thread.sleep(3000);
