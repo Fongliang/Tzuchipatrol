@@ -272,8 +272,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
             for (final Detector.Recognition result : results) {
               final RectF location = result.getLocation();
-              if (location != null && result.getConfidence() >= minimumConfidence) {
+              if (location != null && result.getConfidence() >= minimumConfidence &&result.getTitle().toString().equals("person")) {
+
                Log.d("test--------",result.getTitle().toString());
+                Robot.getInstance().stopMovement();
                 Calendar mCal = Calendar.getInstance();
                 CharSequence s = DateFormat.format("yyyyMMddkkmmss", mCal.getTime());
                 String issueFnd = "於"+s+"發現"+result.getTitle().toString();
@@ -303,9 +305,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                   }
 
                 try{
-                  // delay 7 second
+                  // delay 3 second
                   Thread.sleep(3000);
-//                  Robot.getInstance().startTelepresence("嚴","3f7b52cbdcdc3f77ecd0883f68ad097f"); //android
+            //      Robot.getInstance().startTelepresence("嚴","3f7b52cbdcdc3f77ecd0883f68ad097f"); //android
                   Robot.getInstance().startTelepresence("Jhewei","f126c1f2a6cf53b8b8770ab82dbacedc"); //android
                 } catch(InterruptedException e) {
                   e.printStackTrace();

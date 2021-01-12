@@ -101,13 +101,15 @@ public abstract class CameraActivity extends AppCompatActivity
   private SwitchCompat apiSwitchCompat;
   private TextView threadsTextView;
   private Robot robot;
-  private Button B1;
+  private Button B1,B2;
+  int sslab=0,tf=0;
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     LOGGER.d("onCreate " + this);
     super.onCreate(null);
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     //temi listener
+    tf=1;
     robot = Robot.getInstance();
     robot.addOnGoToLocationStatusChangedListener(this);
     robot.addOnTelepresenceEventChangedListener(this);
@@ -322,10 +324,12 @@ public abstract class CameraActivity extends AppCompatActivity
   public synchronized void onResume() {
     LOGGER.d("onResume " + this);
     super.onResume();
+    tf=1;
     handlerThread = new HandlerThread("inference");
     handlerThread.start();
     handler = new Handler(handlerThread.getLooper());
     B1 = (Button) findViewById(R.id.b1);
+    B2 = (Button) findViewById(R.id.b2);
 
 
     B1.setOnClickListener(new View.OnClickListener() {
@@ -333,6 +337,13 @@ public abstract class CameraActivity extends AppCompatActivity
       public void onClick(View view) {
         robot.goTo("elevator");
         locationNumber =1;
+      }
+    });
+    B2.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+       // android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
       }
     });
 
@@ -368,6 +379,10 @@ public abstract class CameraActivity extends AppCompatActivity
     //temi listener
     robot.removeOnGoToLocationStatusChangedListener(this);
     robot.removeOnTelepresenceEventChangedListener(this);
+    robot.showAppList();
+    System.exit(0);
+
+    //System.exit(0);
   }
 
   protected synchronized void runInBackground(final Runnable r) {
@@ -533,29 +548,30 @@ public abstract class CameraActivity extends AppCompatActivity
 
   @Override
   public void onGoToLocationStatusChanged(String s, String s1, int i, String s2) {
-    if (s1.equals("complete"))
-    {
-      switch (locationNumber){
-        case 1:
-          locationNumber=2;
-          Log.d("location------------",Integer.toString(locationNumber));
-          robot.goTo("302");
-          break;
-        case 2:
-          locationNumber=3;
-          Log.d("location------------",Integer.toString(locationNumber));
-          robot.goTo("elevator");
-          break;
-        case 3:
-          locationNumber=4;
-          Log.d("location------------",Integer.toString(locationNumber));
-          robot.goTo("home base");
-          break;
-        case 4:
-          locationNumber=1;
-          Log.d("location------------",Integer.toString(locationNumber));
-          robot.goTo("elevator");
-          break;
+    if(tf==1 && sslab ==0) {
+      if (s1.equals("complete")) {
+        switch (locationNumber) {
+          case 1:
+            locationNumber = 2;
+            Log.d("location------------", Integer.toString(locationNumber));
+            robot.goTo("302");
+            break;
+          case 2:
+            locationNumber = 3;
+            Log.d("location------------", Integer.toString(locationNumber));
+            robot.goTo("elevator");
+            break;
+          case 3:
+            locationNumber = 4;
+            Log.d("location------------", Integer.toString(locationNumber));
+            robot.goTo("home base");
+            break;
+          case 4:
+            locationNumber = 1;
+            Log.d("location------------", Integer.toString(locationNumber));
+            robot.goTo("elevator");
+            break;
+        }
       }
     }
   }
@@ -563,25 +579,26 @@ public abstract class CameraActivity extends AppCompatActivity
   @Override
   public void onTelepresenceEventChanged(@NotNull CallEventModel callEventModel) {
     Log.d("tele",callEventModel.toString());
-    if (callEventModel.component3()==1)
-    {
-      switch (locationNumber){
-        case 1:
-          Log.d("locationcon------------",Integer.toString(locationNumber));
-          robot.goTo("elevator");
-          break;
-        case 2:
-          Log.d("locationcon------------",Integer.toString(locationNumber));
-          robot.goTo("302");
-          break;
-        case 3:
-          Log.d("locationcon------------",Integer.toString(locationNumber));
-          robot.goTo("elevator");
-          break;
-        case 4:
-          Log.d("locationcon------------",Integer.toString(locationNumber));
-          robot.goTo("home base");
-          break;
+    if(tf==1 && sslab ==0) {
+      if (callEventModel.component3() == 1) {
+        switch (locationNumber) {
+          case 1:
+            Log.d("locationcon------------", Integer.toString(locationNumber));
+            robot.goTo("elevator");
+            break;
+          case 2:
+            Log.d("locationcon------------", Integer.toString(locationNumber));
+            robot.goTo("302");
+            break;
+          case 3:
+            Log.d("locationcon------------", Integer.toString(locationNumber));
+            robot.goTo("elevator");
+            break;
+          case 4:
+            Log.d("locationcon------------", Integer.toString(locationNumber));
+            robot.goTo("home base");
+            break;
+        }
       }
     }
   }

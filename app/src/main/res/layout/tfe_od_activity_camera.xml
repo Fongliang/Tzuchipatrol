@@ -20,20 +20,42 @@
     android:layout_height="match_parent"
     android:background="#00000000">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/black"
         android:orientation="vertical">
 
 
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="org.tensorflow.demo.CameraActivity" />
+            tools:context="org.tensorflow.demo.CameraActivity" >
+
+            <Button
+                android:id="@+id/b1"
+                android:layout_width="180dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="1110dp"
+                android:layout_marginTop="50dp"
+                android:backgroundTint="@android:color/holo_green_light"
+                android:text="start"
+                android:textAllCaps="false"
+                android:textColor="#004d8d"
+                android:textSize="30sp" />
+            <Button
+                android:id="@+id/b2"
+                android:layout_width="180dp"
+                android:layout_height="80dp"
+                android:layout_marginLeft="1110dp"
+                android:layout_marginTop="200dp"
+                android:backgroundTint="@android:color/holo_green_light"
+                android:text="exit"
+                android:textAllCaps="false"
+                android:textColor="#004d8d"
+                android:textSize="30sp" />
+        </FrameLayout>
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -43,17 +65,6 @@
             android:background="@color/tfe_semi_transparent">
 
         </androidx.appcompat.widget.Toolbar>
-        <Button
-            android:id="@+id/b1"
-            android:layout_width="200dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="100dp"
-            android:layout_marginLeft="20dp"
-            android:backgroundTint="@android:color/holo_green_light"
-            android:text="Home"
-            android:textAllCaps="false"
-            android:textSize="30sp"
-            android:textColor="#004d8d"/>
 
     </RelativeLayout>
 
