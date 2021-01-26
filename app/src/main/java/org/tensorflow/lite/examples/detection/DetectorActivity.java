@@ -308,7 +308,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                   // delay 3 second
                   Thread.sleep(3000);
             //      Robot.getInstance().startTelepresence("嚴","3f7b52cbdcdc3f77ecd0883f68ad097f"); //android
-                  Robot.getInstance().startTelepresence("Jhewei","f126c1f2a6cf53b8b8770ab82dbacedc"); //android
+                    Robot.getInstance().startTelepresence("Chen","0c8bc1fbacb21115b4492625e035c404");
                 } catch(InterruptedException e) {
                   e.printStackTrace();
                 }
