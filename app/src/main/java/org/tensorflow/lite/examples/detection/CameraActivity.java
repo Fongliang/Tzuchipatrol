@@ -554,17 +554,17 @@ public abstract class CameraActivity extends AppCompatActivity
           case 1:
             locationNumber = 2;
             Log.d("location------------", Integer.toString(locationNumber));
-            robot.goTo("302");
+            robot.goTo("middle");
             break;
           case 2:
             locationNumber = 3;
             Log.d("location------------", Integer.toString(locationNumber));
-            robot.goTo("elevator");
+            robot.goTo("end");
             break;
           case 3:
             locationNumber = 4;
             Log.d("location------------", Integer.toString(locationNumber));
-            robot.goTo("home base");
+            robot.goTo("start");
             break;
           case 4:
             locationNumber = 1;
@@ -588,15 +588,15 @@ public abstract class CameraActivity extends AppCompatActivity
             break;
           case 2:
             Log.d("locationcon------------", Integer.toString(locationNumber));
-            robot.goTo("302");
+            robot.goTo("middle");
             break;
           case 3:
             Log.d("locationcon------------", Integer.toString(locationNumber));
-            robot.goTo("elevator");
+            robot.goTo("end");
             break;
           case 4:
             Log.d("locationcon------------", Integer.toString(locationNumber));
-            robot.goTo("home base");
+            robot.goTo("start");
             break;
         }
       }

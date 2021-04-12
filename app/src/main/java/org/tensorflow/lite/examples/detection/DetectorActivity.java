@@ -77,7 +77,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final String TF_OD_API_LABELS_FILE = "labelmap.txt";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
   // Minimum detection confidence to track a detection.
-  private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.7f;
+  private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
   private static final boolean MAINTAIN_ASPECT = false;
   private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
   private static final boolean SAVE_PREVIEW_BITMAP = false;
@@ -272,46 +272,49 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
             for (final Detector.Recognition result : results) {
               final RectF location = result.getLocation();
-              if (location != null && result.getConfidence() >= minimumConfidence &&result.getTitle().toString().equals("person")) {
+              if (location != null && result.getConfidence() >= minimumConfidence) {
+//                  if (result.getTitle().toString().equals("person")||result.getTitle().toString().equals("bottle")||result.getTitle().toString().equals("cat")
+//                  ||result.getTitle().toString().equals("dog")||result.getTitle().toString().equals("suitcase")||result.getTitle().toString().equals("handbag")){
+                  if(result.getTitle().toString().equals("person")){
 
-               Log.d("test--------",result.getTitle().toString());
-                Robot.getInstance().stopMovement();
-                Calendar mCal = Calendar.getInstance();
-                CharSequence s = DateFormat.format("yyyyMMddkkmmss", mCal.getTime());
-                String issueFnd = "於"+s+"發現"+result.getTitle().toString();
-                String patrolLog = "/storage/emulated/0/"+s.toString()+".txt";
-                // write local report
-                Log.d("Log------",patrolLog);
-                  String externalStorageDir = Environment.getExternalStorageDirectory().toString();
-                  verifyStoragePermissions(DetectorActivity.this);
-                try{
-                  FileWriter fw = new FileWriter(patrolLog, false);
-                  BufferedWriter bw = new BufferedWriter(fw); //將BufferedWeiter與FileWrite物件做連結
-                  bw.write(issueFnd);
-                  bw.newLine();
-                  bw.close();
-                }catch(IOException e){
-                  e.printStackTrace();
-                }
-                String filename = s.toString()+".txt";
-                //FTP upload report
-     //             verifyStoragePermissions_read(DetectorActivity.this);
-                  ftpUpload("140.123.97.161",1111   ,"anonymous","","/storage/emulated/0/",filename);
-                    Log.d("ftp","/storage/emulated/0/"+filename);
-                //delete local report
-                  File file = new File(patrolLog);
-                  if (file.exists()) {
-                    file.delete();
-                  }
+                      Log.d("test--------", result.getTitle().toString());
+                      Robot.getInstance().stopMovement();
+                      Calendar mCal = Calendar.getInstance();
+                      CharSequence s = DateFormat.format("yyyyMMddkkmmss", mCal.getTime());
+                      String issueFnd = "於" + s + "發現" + result.getTitle().toString();
+                      String patrolLog = "/storage/emulated/0/" + s.toString() + ".txt";
+                      // write local report
+                      Log.d("Log------", patrolLog);
+                      String externalStorageDir = Environment.getExternalStorageDirectory().toString();
+                      verifyStoragePermissions(DetectorActivity.this);
+                      try {
+                          FileWriter fw = new FileWriter(patrolLog, false);
+                          BufferedWriter bw = new BufferedWriter(fw); //將BufferedWeiter與FileWrite物件做連結
+                          bw.write(issueFnd);
+                          bw.newLine();
+                          bw.close();
+                      } catch (IOException e) {
+                          e.printStackTrace();
+                      }
+                      String filename = s.toString() + ".txt";
+                      //FTP upload report
+                      //             verifyStoragePermissions_read(DetectorActivity.this);
+                      ftpUpload("140.123.97.161", 1111, "anonymous", "", "/storage/emulated/0/", filename);
+                      Log.d("ftp", "/storage/emulated/0/" + filename);
+                      //delete local report
+                      File file = new File(patrolLog);
+                      if (file.exists()) {
+                          file.delete();
+                      }
 
-                try{
-                  // delay 3 second
-                  Thread.sleep(3000);
-            //      Robot.getInstance().startTelepresence("嚴","3f7b52cbdcdc3f77ecd0883f68ad097f"); //android
-                    Robot.getInstance().startTelepresence("Chen","0c8bc1fbacb21115b4492625e035c404");
-                } catch(InterruptedException e) {
-                  e.printStackTrace();
-                }
+                      try {
+                          // delay 3 second
+                          Thread.sleep(3000);
+                          //      Robot.getInstance().startTelepresence("嚴","3f7b52cbdcdc3f77ecd0883f68ad097f"); //android
+                          Robot.getInstance().startTelepresence("Chen", "0c8bc1fbacb21115b4492625e035c404");
+                      } catch (InterruptedException e) {
+                          e.printStackTrace();
+                      }
 
 //                try{
 //                    // delay 7 second
@@ -328,12 +331,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 //                  e.printStackTrace();
 //                }
 
-                canvas.drawRect(location, paint);
+                      canvas.drawRect(location, paint);
 
-                cropToFrameTransform.mapRect(location);
+                      cropToFrameTransform.mapRect(location);
 
-                result.setLocation(location);
-                mappedRecognitions.add(result);
+                      result.setLocation(location);
+                      mappedRecognitions.add(result);
+                  }
               }
             }
 
