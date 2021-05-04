@@ -72,12 +72,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   // Configuration values for the prepackaged SSD model.
   private static final int TF_OD_API_INPUT_SIZE = 300;
-  private static final boolean TF_OD_API_IS_QUANTIZED = true;
+  private static final boolean TF_OD_API_IS_QUANTIZED = false;
   private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
   private static final String TF_OD_API_LABELS_FILE = "labelmap.txt";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
   // Minimum detection confidence to track a detection.
-  private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
+  private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.7f;
   private static final boolean MAINTAIN_ASPECT = false;
   private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
   private static final boolean SAVE_PREVIEW_BITMAP = false;
@@ -273,9 +273,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             for (final Detector.Recognition result : results) {
               final RectF location = result.getLocation();
               if (location != null && result.getConfidence() >= minimumConfidence) {
-//                  if (result.getTitle().toString().equals("person")||result.getTitle().toString().equals("bottle")||result.getTitle().toString().equals("cat")
-//                  ||result.getTitle().toString().equals("dog")||result.getTitle().toString().equals("suitcase")||result.getTitle().toString().equals("handbag")){
-                  if(result.getTitle().toString().equals("person")){
+                  if (result.getTitle().toString().equals("person")||result.getTitle().toString().equals("bottle")||result.getTitle().toString().equals("cat")
+                  ||result.getTitle().toString().equals("dog")||result.getTitle().toString().equals("suitcase")||result.getTitle().toString().equals("handbag")){
+//                  if(result.getTitle().toString().equals("person")){
 
                       Log.d("test--------", result.getTitle().toString());
                       Robot.getInstance().stopMovement();
